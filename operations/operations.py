@@ -12,7 +12,8 @@ def sipmle_pow_mod(base: int, index_n: int, modulus: int) -> int:
 ### base ^ index_n % modulus 
 def pow_mod(base: int, index_n: int, modulus: int) -> int:
     if index_n < 0:
-        print("Can't do \"pow_mod\" with with negative index_n :(")
+        print(f"Can't do \"pow_mod\" with with negative index_n :(\
+            \n({base} ^ {index_n} % {modulus})")
         return 0
 
     res: int = 1
@@ -117,9 +118,13 @@ def get_g_p(length: int = 10) -> tuple:
     q = get_rand_simple(length)
     p = 2 * q + 1
     
+    while not is_simple(p):
+        q = get_rand_simple(length)
+        p = 2 * q + 1
+    
     g = get_rand(length)
-    while pow_mod(g, q, p) == 1 and g < 1 and g > (p - 1):
-        g = get_rand(length)
+    while pow_mod(g, q, p) == 1 or g < 1 or g > (p - 1):
+        g = get_rand(length - 3)
 
     return (g, p)
 
