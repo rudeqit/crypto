@@ -1,3 +1,5 @@
 __pycache__
 *.txt
+!1.txt
 *.jpg
+!pic.jpg
