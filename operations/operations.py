@@ -3,6 +3,8 @@
 import random
 import math
 
+import time
+
 def sipmle_pow_mod(base: int, index_n: int, modulus: int) -> int:
     c: int = 1
     for index in range(index_n):
@@ -44,7 +46,8 @@ def gcd(a: int, b: int) -> int:
   # gcd(a, b), x, y (as tuple)
 def steroid_evklid(a: int, b: int) -> tuple:
     if a < b:
-        # print(f"Incorrect input value: {a:d} < {b:d}")
+        print(f"Incorrect input value: {a:d} < {b:d}")
+        time.sleep(4)  
         return (0, 0, 0)
 
     U = (a, 1, 0)
@@ -131,10 +134,18 @@ def get_g_p(length: int = 10) -> tuple:
 ### Random number with given length
 def get_rand(length: int = 10) -> int:
     rand_float: float = random.random()
+    if rand_float <= 0.0:
+        rand_float: float = random.random()
 
-    while length != 0:
-        rand_float *= 10
-        length -= 1
+    l = length
+    num_z = 1
+    while l != 1:
+        num_z *= 10
+        l -= 1
+
+    rand_float *= 10.0
+    while round(rand_float) // num_z <= 0:
+        rand_float *= 10.0
 
     return round(rand_float)
 
