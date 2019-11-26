@@ -25,9 +25,12 @@ class Shamir:
                 el = int.from_bytes(element, byteorder="little")
                 
                 x1 = self.alice.encode(el)
-                x2 = self.bob.encode(el)
-                x3 = self.alice.decode(el)
-                x4 = self.bob.decode(el)
+                x2 = self.bob.encode(x1)
+                x3 = self.alice.decode(x2)
+                x4 = self.bob.decode(x3)
+
+                # print(el)
+                # print(x4)
                 
                 ### Write decode info in file
                 # self.log(x1, x2, x3)
@@ -50,17 +53,20 @@ class Subscriber:
         return pow_mod(message, self.d, self.p)
 
     def get_param(self, p):
-        self.c = get_rand()               
-        nod, x, y = steroid_evklid(self.c, p - 1)
+        self.c = get_rand() % (p - 1)               
+        nod, x, y = steroid_evklid(p - 1, self.c)
 
-        while nod != 1 or x <= 0:
-            self.c = get_rand()
-            nod, x, y = steroid_evklid(self.c, p - 1)
-        self.d = x * self.c
+        while nod != 1 or y <= 0:
+            self.c = get_rand() % (p - 1)  
+            nod, x, y = steroid_evklid(p - 1, self.c)
+        self.d = y
+
+        # temp = (self.c * self.d) % (p - 1)
+        # print(f"self.c * self.d % p - 1 = {temp}")
 
 
 
 if __name__ == "__main__":
     cipers_shamir = Shamir()
-    # cipers_shamir.shamir("pic.jpg", "out_pic.jpg")
-    cipers_shamir.shamir("1.txt", "2.txt")
+    cipers_shamir.shamir("pic.jpg", "out_pic.jpg")
+    # cipers_shamir.shamir("1.txt", "2.txt")
