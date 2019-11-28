@@ -115,11 +115,11 @@ def is_simple(n) -> bool:
 
 ### Generate g and p value for Diffie Hallman
 def get_g_p(length: int = 10) -> tuple:
-    q = get_rand_simple(length)
+    q = get_rand_simple(length - 1)
     p = 2 * q + 1
     
     while not is_simple(p):
-        q = get_rand_simple(length)
+        q = get_rand_simple(length - 1)
         p = 2 * q + 1
     
     g = get_rand(length)
@@ -186,6 +186,20 @@ def step_baby_giant(y: int, a: int, p: int, m: int, k: int) -> int:
     # print(vector_i)
     print("Can't find a^im = a^j*y")    
     return 0
+
+def get_mut_prime(p: int) -> tuple:
+    c = get_rand() % p               
+    nod, x, y = steroid_evklid(p, c)
+
+    while nod != 1 or y <= 0:
+        c = get_rand() % p  
+        nod, x, y = steroid_evklid(p, c)
+    d = y
+
+    # temp = (c * d) % (p)
+    # print(f"c * d % p - 1 = {c} * {d} % {p} = {temp}")
+
+    return c, d
 
 ### pow_mod for baby step baby giant (result * y)
 def pow_mod_bs(y, a, m, p) -> int:
