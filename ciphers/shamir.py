@@ -2,9 +2,9 @@
 
 ### Add path to operations lib 
 import sys
-sys.path.append("../operations")
+sys.path.append("..")
 
-from operations import diff_hell, pow_mod, get_rand_simple, get_rand, steroid_evklid
+from operations.operations import pow_mod, get_rand_simple, get_rand, steroid_evklid
 
 class Shamir:
     def __init__(self, p = None):

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 ### Add path to operations lib 
-import random
 import sys
-sys.path.append("../operations")
+sys.path.append("..")
 
-from operations import diff_hell, pow_mod, pow_mod_bs, get_rand_simple, get_rand, get_g_p, steroid_evklid, gcd, is_simple
+from operations.operations import pow_mod, get_rand_simple, get_rand, steroid_evklid, gcd
 
 class RSA:
     def __init__(self):

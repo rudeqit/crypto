@@ -3,9 +3,9 @@
 ### Add path to operations lib 
 import random
 import sys
-sys.path.append("../operations")
+sys.path.append("..")
 
-from operations import diff_hell, pow_mod, pow_mod_bs, get_rand_simple, get_rand, get_g_p
+from operations.operations import pow_mod, pow_mod_bs, get_g_p
 
 class ElGamal:
     def __init__(self):

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
 ### Add path to operations lib 
-import random
 import os
 import sys
-sys.path.append("../operations")
+sys.path.append("..")
 
-from operations import diff_hell, pow_mod, pow_mod_bs, get_rand_simple, get_rand, get_g_p, steroid_evklid, gcd, is_simple
+from operations.operations import get_rand
 
 class Vernama:
     def __init__(self, file_in):

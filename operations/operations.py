@@ -3,8 +3,6 @@
 import random
 import math
 
-import time
-
 def sipmle_pow_mod(base: int, index_n: int, modulus: int) -> int:
     c: int = 1
     for index in range(index_n):
@@ -14,7 +12,7 @@ def sipmle_pow_mod(base: int, index_n: int, modulus: int) -> int:
 ### base ^ index_n % modulus 
 def pow_mod(base: int, index_n: int, modulus: int) -> int:
     if index_n < 0:
-        print(f"Can't do \"pow_mod\" with with negative index_n :(\
+        print(f"Error from pow_mod(): Can't do \"pow_mod\" with with negative index_n :(\
             \n({base} ^ {index_n} % {modulus})")
         return 0
 
@@ -46,8 +44,7 @@ def gcd(a: int, b: int) -> int:
   # gcd(a, b), x, y (as tuple)
 def steroid_evklid(a: int, b: int) -> tuple:
     if a < b:
-        print(f"Incorrect input value: {a:d} < {b:d}")
-        time.sleep(4)  
+        print(f"Error from steroid_evklid(): Incorrect input value: {a:d} < {b:d}")
         return (0, 0, 0)
 
     U = (a, 1, 0)
@@ -71,7 +68,7 @@ def steroid_evklid(a: int, b: int) -> tuple:
 # X - Secret keys
 def diffie_hellman(X_A: int, X_B: int, g: int, p: int) -> tuple:
     if g < 1 and g > (p - 1):
-        print("Incorrect g and p variables")
+        print("Error from diffie_hellman(): Incorrect g and p variables")
         return (0, 0)
 
     # if not is_simple(p):
@@ -161,7 +158,7 @@ def get_rand_simple(length = 10) -> int:
   # return x
 def step_baby_giant(y: int, a: int, p: int, m: int, k: int) -> int:
     if m * k < p:
-        print(f"Incorrect m and k values. m * k should be less then p")
+        print(f"Error form step_baby_giant: Incorrect m and k values. m * k should be less then p")
 
     # (a ** (m - 1)) * y
     vector_j = []
