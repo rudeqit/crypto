@@ -12,7 +12,7 @@ from operations.operations import pow_mod, get_g_p, get_mut_prime
 class ElGamalSign:
     def __init__(self):
         self.g, self.p = get_g_p()        
-        self.alice = Subscriber(self.p, self.g)
+        self.alice = Subscriber(self.p, self.g) 
 
     def el_gamal_sign(self, file_in, file_sign=None):
         self.x = self.alice.c
@@ -53,16 +53,7 @@ class ElGamalSign:
                 ss.append(str(s) + "\n")
                 fd_sign.write(str(r) + " " + str(s) + "\n")
 
-                ### Print info
-                # print(f"h_elem = {elem}")
-                # print(f"{elem - (self.x * r)} % {self.p - 1}")
-                # print(f"u = {u}")
-                # print(f"k * k^-1 % p - 1 = {k} * {k_inv} % {self.p - 1} = {(k * k_inv) % (self.p - 1)}")
-                # print(s)                
-                # print(f"r = {r}, s = {s}")
-                # res1 = (pow_mod(y, r, p) * pow_mod(r, s, p)) % p
-                # res2 = pow_mod(g, elem, p)
-                # print(f"{res1} = {res2}\n")
+                # self.print_debug_each_iter(elem, r, s, u, k, k_inv)
 
         return rr, ss
 
@@ -112,6 +103,17 @@ class ElGamalSign:
             print("Great! ElGamal signature is authentic")
 
         return valid, result
+
+    def print_debug_each_iter(self, elem, r, s, u, k, k_inv):
+        print(f"h_elem = {elem}")
+        print(f"u = {elem} - {self.x} * {r} % {self.p} - 1 = {u}")
+        print(f"Check k: k * k^-1 % p - 1 = {k} * {k_inv} % {self.p - 1} = {(k * k_inv) % (self.p - 1)}")                
+        print(f"r = {r}, s = {s}")
+        
+        print("Check result:")
+        res1 = (pow_mod(self.y, r, self.p) * pow_mod(r, s, self.p)) % self.p
+        res2 = pow_mod(self.g, elem, self.p)
+        print(f"{res1} = {res2}\n")
 
 if __name__ == "__main__":
     # file_in = "1.txt"
