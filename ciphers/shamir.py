@@ -6,14 +6,22 @@ sys.path.append("..")
 
 from operations.operations import pow_mod, get_rand_simple, get_rand, steroid_evklid
 
+LOG = True
+
 class Shamir:
+
     def __init__(self, p = None):
         self.p = get_rand_simple() if p is None else p
+
         ### Init two subscribers - Alice and Bob
         self.alice = Subscriber(self.p)
         self.bob = Subscriber(self.p)
 
     def shamir(self, file_in, file_out):
+        ### Log shit
+        xxx = []
+        xxx_enc = []
+
         with open(file_in, "rb") as fd_in, open(file_out, "wb") as fd_out:
             while True:
                 ### Read file byte to byte
@@ -29,19 +37,40 @@ class Shamir:
                 x3 = self.alice.decode(x2)
                 x4 = self.bob.decode(x3)
 
+                ### Should be equal
                 # print(el)
                 # print(x4)
+
+                if LOG:
+                    xxx.append(f"{el} --> {x1} --> {x2} --> {x3} --> {x4}\n")
+                    xxx_enc.append(f"{x1} --> {x2} --> {x3}\n")
                 
                 ### Write decode info in file
-                # self.log(x1, x2, x3)
                 fd_out.write(x4.to_bytes(num_bytes, byteorder="little"))
 
-    def log(self, x1, x2, x3, keys_file = "Shamir_Keys.txt", decode_value = "Shamir_Decode.txt"):
-        with open(keys_file, "a") as fd_kf, open(decode_value, "a") as fd_df:
+        if LOG:
+            self.log(xxx, xxx_enc)
+
+        print(f"Hello from Shamir cipher!")
+        print(f"Alice encode file \'{file_in}\' and send it to Bob.")
+        print(f"Bob recv msg, decode and save it in \'{file_out}\'.")
+
+    
+    def log(self, xxx, xxx_enc, keys_file = "shamir_keys", encode_file = "shamir_encode"):
+        with open(keys_file, "w") as fd_kf, open(encode_file, "w") as fd_ef:
+            
             fd_kf.write(f"p = {self.p}, ca = {self.alice.c}, da = {self.alice.d}, cb = {self.bob.c}, db = {self.bob.d}\n")
-            fd_df.write(f"x1 = {x1}, x2= {x2}, x3 = {x3}\n")
+            
+            for x in xxx:
+                fd_kf.write(x)
+
+            for x in xxx_enc:
+                fd_ef.write(x)
+
+            
 
 class Subscriber:
+
     def __init__(self, p):
         self.p = p
         self.get_param(self.p)
@@ -66,7 +95,9 @@ class Subscriber:
 
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
+    # file_in, file_out = "pic.jpg", "out_pic.jpg"
+    file_in, file_out = "1.txt", "2.txt"   
+
     cipers_shamir = Shamir()
-    cipers_shamir.shamir("pic.jpg", "out_pic.jpg")
-    # cipers_shamir.shamir("1.txt", "2.txt")
+    cipers_shamir.shamir(file_in, file_out)

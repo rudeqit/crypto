@@ -6,15 +6,19 @@ sys.path.append("..")
 
 from operations.operations import pow_mod, get_rand_simple, get_rand, steroid_evklid, gcd
 
+LOG = True
+
 class RSA:
+
     def __init__(self):
         self.alice = Subscriber()
         self.bob = Subscriber()
-        
-        # self.write_keys()
         # self.print_info()
 
     def rsa(self, file_in, file_out):
+        ### Log shit
+        enc = []
+
         with open(file_in, "rb") as fd_in, open(file_out, "wb") as fd_out:
             while True:
                 ### Read file byte to byte
@@ -28,13 +32,37 @@ class RSA:
                 alice_encode = self.alice.encode(el, self.bob.d, self.bob.N)
                 bob_decode = self.bob.decode(alice_encode)
 
+                ### Should be equal
                 # print(el)
                 # print(bob_decode)
 
+                if LOG:
+                    enc.append(f"{alice_encode}\n")
                 ### Write decode info in file
-                # self.log(alice_encode, bob_decode)
 
                 fd_out.write(bob_decode.to_bytes(num_bytes, byteorder="little"))
+        
+        if LOG:
+            self.write_keys()
+            self.log(enc)
+
+        print(f"Hello from RSA cipher!")
+        print(f"Alice encode file \'{file_in}\' and send it to Bob.")
+        print(f"Bob recv msg, decode and save it in \'{file_out}\'.")
+
+    def write_keys(self, rsa_pub = "rsa.pub", rsa_private = "rsa"):
+        with open(rsa_pub, "w") as fd_rpb, open(rsa_private, "w") as fd_rpv:
+            fd_rpb.write(f"Alice:\n\td = {self.alice.d}, N = {self.alice.N}\
+                \nBob:\n\td = {self.bob.d}, N = {self.bob.N}\n")
+            
+            fd_rpv.write(f"Alice secret:\n\tc = {self.alice.c}\
+                \nBob secret:\n\tc = {self.bob.c}\n")
+
+    def log(self, encode, rsa_encode = "rsa_encode"):
+        with open(rsa_encode, "w") as fd_en:
+            
+            for elem in encode:
+                fd_en.write(elem)
 
     def print_info(self):
         print(f"Alice:\n\tP = {self.alice.P}, Q = {self.alice.Q} N = {self.alice.N}\
@@ -47,21 +75,9 @@ class RSA:
         print(f"(bob.c * bob.d % bob.fi)) = {(self.bob.c * self.bob.d % self.bob.fi)}")
         print(f"gcd(bob.d, bob.fi) = {gcd(self.bob.d, self.bob.fi)}")
 
-    def write_keys(self, rsa_pub = "RSA_Public_Keys.txt", rsa_private = "RSA_Private_Keys.txt"):
-        with open(rsa_pub, "w") as fd_rpb, open(rsa_private, "w") as fd_rpv:
-            fd_rpb.write(f"Alice:\n\td = {self.alice.d}, N = {self.alice.N}\
-                \nBob:\n\td = {self.bob.d}, N = {self.bob.N}\n")
-            
-            fd_rpv.write(f"Alice secret:\n\tc = {self.alice.c}\
-                \nBob secret:\n\tc = {self.bob.c}\n")
-
-    def log(self, encode, decode, rsa_encode = "RSA_encode", rsa_decode = "RSA_decode"):
-        with open(rsa_encode, "a") as fd_en, open(rsa_decode, "a") as fd_dec:
-            fd_en.write(f"{encode}")
-            fd_dec.write(f"{decode}")
-
 
 class Subscriber:
+
     def __init__(self):
         self.P = get_rand_simple()
         self.Q = get_rand_simple()
@@ -84,7 +100,9 @@ class Subscriber:
     def decode(self, e):
         return pow_mod(e, self.c, self.N)
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
+    # file_in, file_out = "pic.jpg", "out_pic.jpg"
+    file_in, file_out = "1.txt", "2.txt"     
+
     cipers_rsa = RSA()
-    # cipers_rsa.rsa("1.txt", "2.txt")
-    cipers_rsa.rsa("pic.jpg", "out_pic.jpg")
+    cipers_rsa.rsa(file_in, file_out)
