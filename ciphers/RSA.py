@@ -4,7 +4,7 @@
 import sys
 sys.path.append("..")
 
-from operations.operations import pow_mod, get_rand_simple, get_rand, steroid_evklid, gcd
+from operations.operations import pow_mod, get_rand_simple, get_rand, steroid_evklid, gcd, is_simple
 
 LOG = True
 
@@ -78,10 +78,16 @@ class RSA:
 
 class Subscriber:
 
-    def __init__(self):
-        self.P = get_rand_simple()
-        self.Q = get_rand_simple()
+    def __init__(self, P=None, Q=None):
+        self.P = get_rand_simple() if P is None else P
+        self.Q = get_rand_simple() if Q is None else Q
+        if self.P == self.Q:
+            raise ValueError(f"self.P == self.Q ({self.P} == {self.Q})")
+
         self.N = self.P * self.Q
+
+        # Here should be check P and Q is prime 
+
         self.get_param()
         
     def get_param(self):

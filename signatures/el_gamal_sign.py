@@ -10,6 +10,7 @@ from ciphers.el_gamal import ElGamal, Subscriber
 from operations.operations import pow_mod, get_g_p, get_mut_prime
 
 class ElGamalSign:
+    
     def __init__(self):
         self.g, self.p = get_g_p()        
         self.alice = Subscriber(self.p, self.g) 

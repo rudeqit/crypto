@@ -9,11 +9,12 @@ from ciphers.RSA import RSA, Subscriber
 from operations.operations import pow_mod
 
 class RSA_sign:
+    
     def __init__(self):
         self.alice = Subscriber()
 
     def rsa_sign(self, file_in, file_sign=None):
-        file_sign = str(file_in) + "_RSA_sign" if file_sign is None else file_sign
+        file_sign = str(file_in) + "_rsa_sign" if file_sign is None else file_sign
 
         with open(file_in, "rb") as fd_in, open(file_sign, "w") as fd_sigh:
             file = fd_in.read()
@@ -25,10 +26,10 @@ class RSA_sign:
                 # print(elem)
                 fd_sigh.write(str(elem) + "\n")
 
-            return s
+        return s
 
     def rsa_sign_check(self, file_in, file_sign=None):
-        file_sign = str(file_in) + "_RSA_sign" if file_sign is None else file_sign
+        file_sign = str(file_in) + "_rsa_sign" if file_sign is None else file_sign
         with open(file_in, "rb") as fd_in:
             w = self.get_w(file_sign)
             
@@ -37,6 +38,11 @@ class RSA_sign:
 
             print(f"{self.y}")
             print(bytes(self.w))
+
+            if self.y == bytes(self.w):
+                print("Great! RSA signature is authentic")
+            else:
+                print("Oh shit")
 
     def get_s(self, y=None, c=None, N=None):
         y = self.y if y is None else y
