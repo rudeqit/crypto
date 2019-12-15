@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO доделать лабу, она не готова
+
 # Add path to our lib
 import hashlib
 import random
@@ -10,36 +12,74 @@ from operations.operations import pow_mod, get_mut_prime
 from ciphers.RSA import Subscriber
 from prime import gen_prime
 
+'''
+Класс сервера
+Работает по следующей схеме:
+Регистрирует избирателя, генерирует для него число 512 бит,
+Проверяет подпись (метод check), созраняет его подпись (или нужно хранить уже сам голос?)
+'''
 class Server:
 
     def __init__(self):
         self.dudes = []
         self.voices = []
+        self.voters = {'Arkady': False,
+                       'Kirill': False,
+                       'Random Babka': False,
+                       'Ded': False,
+                       'Grisha': False}
 
         self.P, self.Q = gen_prime(1024), gen_prime(1024)
         self.sub = Subscriber(self.P, self.Q)
         self.N = self.sub.N
         self.c = self.sub.c
         self.d = self.sub.d
-
+        
         # print(f"d = {self.d}\nN = {self.N}")
-    
+
+    def get_rnd(self):
+        return random.getrandbits(512)
+
+    '''
+    Ищем человека в словаре voters, проверяем ключ:
+    False - еще не голосовал
+    True - проголосовал
+    None - такого учасника нет в словаре
+    '''
+    def register(self, name):
+        value = self.voters.get(name)
+
+        if value == True:
+            raise ValueError(f"WAIT, THATS ILLEGAL.\n"
+                 f"Voter with name {name} came twice")
+            
+        if value == None:
+            raise ValueError(f"WAIT, THATS ILLEGAL.\n"
+                 f"Voter with name {name} not found") 
+
+        # Помечам человека, как пришедшего
+        self.voters[name] = True
+
     def get_dn(self):
         return self.d, self.N
 
+    ''' 
+    Проверяем бланк избирателя, 
+    если такой уже был - бросаем исключение 
+    Возвращает число _s (испольльзуется для подписи, вроде)
+    '''  
     def check_dude(self, h, rnd):
         if rnd in self.dudes:
-            raise ValueError(f"WAIT, THATS ILLEGAL."
+            raise ValueError(f"WAIT, THATS ILLEGAL.\n"
                              f"Dude with rnd {rnd} came twice")
         
         self.dudes.append(rnd)        
         return self.sub.decode(h)
         # return pow_mod(h, self.c, self.N)
 
-
+    ''' Проверяет подпись анонимного участника '''
     def check(self, n, s):
         _n = self.sub.encode(s, self.d, self.N) 
-        # _n = pow_mod(s, self.d, self.N)
         if n != _n:
             print(f"Ops, {n} != {_n}")
             pass
@@ -47,11 +87,15 @@ class Server:
         print(f"Alright dude, u good\n\t({n} == {_n})")
         self.voices.append(n)
 
+'''
+Класс анонимного избирателя.
+Идентифицируется по числу rnd, не хранит имени
+'''
 class Dude:
 
-    def __init__(self, N):
+    def __init__(self, N, rnd):
         self.N = N
-        self.rnd = random.getrandbits(512)
+        self.rnd = rnd
 
     def get_n(self, voice: int):
         self.n = (self.rnd << 1) | voice
@@ -80,6 +124,9 @@ class Dude:
         self.s = (self._r * _s) % self.N
         return self.h, self.s
 
+'''
+Эмуляция самого голсования.
+'''
 class Voting:
 
     def __init__(self):
@@ -87,18 +134,23 @@ class Voting:
 
     def vote(self):
         d, N = self.server.get_dn()
-        dude = Dude(N)
+        rnd = self.server.get_rnd()
+        dude = Dude(N, rnd)
 
-        print(f"Dude, do u want to sleep? (y or n)")
+        print("What is your name?")
+        name = input()
+        self.server.register(name)
+
+        print(f"Putin is crab? (y or n)")
         voice = input()
         if voice == "y" or voice == "yes":
-            print("I also want to, bro")
+            print("OK")
             v = 1
         elif voice == "q":
             print("Voiting is over.")
             return False
         else:
-            print("U do not want?! OK.")
+            print("U think he's not?! OK.")
             v = 0
     
         n = dude.get_n(v)
