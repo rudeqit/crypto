@@ -96,8 +96,8 @@ class Subscriber:
 
 
 if __name__ == "__main__":    
-    # file_in, file_out = "pic.jpg", "out_pic.jpg"
-    file_in, file_out = "1.txt", "2.txt"   
+    file_in, file_out = "pic.jpg", "out_pic.jpg"
+    # file_in, file_out = "1.txt", "2.txt"   
 
     cipers_shamir = Shamir()
     cipers_shamir.shamir(file_in, file_out)

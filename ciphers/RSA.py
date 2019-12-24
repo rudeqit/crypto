@@ -13,7 +13,7 @@ class RSA:
     def __init__(self):
         self.alice = Subscriber()
         self.bob = Subscriber()
-        # self.print_info()
+        self.print_info()
 
     def rsa(self, file_in, file_out):
         ### Log shit
@@ -78,9 +78,9 @@ class RSA:
 
 class Subscriber:
 
-    def __init__(self, P=None, Q=None):
-        self.P = get_rand_simple() if P is None else P
-        self.Q = get_rand_simple() if Q is None else Q
+    def __init__(self, P=None, Q=None, c=None, d=None):
+        self.P = get_rand_simple(5) if P is None else P
+        self.Q = get_rand_simple(5) if Q is None else Q
         if self.P == self.Q:
             raise ValueError(f"self.P == self.Q ({self.P} == {self.Q})")
 
@@ -88,19 +88,25 @@ class Subscriber:
 
         # Here should be check P and Q is prime 
 
-        self.get_param()
+        self.get_param(c, d)
         
-    def get_param(self):
+    def get_param(self, c=None, d=None):
         self.fi = (self.P - 1) * (self.Q - 1)
-        self.c = get_rand() % (self.fi - 1)
 
+        if c is None and d is None:
+            self.c = c
+            self.d = d
+            pass
+        
+        self.c = get_rand() % (self.fi - 1)
+        
         nod, x, y = steroid_evklid(self.fi, self.c)
         while nod != 1 or y <= 0:
             self.c = get_rand() % (self.fi)
             nod, x, y = steroid_evklid(self.fi, self.c)
         self.d = y 
 
-    def encode(self, message, d, N) -> tuple:
+    def encode(self, message, d, N):
         return pow_mod(message, d, N)
 
     def decode(self, e):
